@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<!-- Paste your OpenRouter API key at the very BOTTOM of this file (SETTINGS block). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Autopilot · AI automation workbench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f9;--panel:#fff;--ink:#0d1226;--ink2:#161d3d;--mute:#5b6786;--line:#d5dcee;--blue:#3347ff;--blue-d:#2234d6;--amber:#ffb400;--ok:#0c8a5c;--bad:#c62d3f;--sh:0 1px 2px rgba(13,18,38,.06),0 10px 30px -12px rgba(13,18,38,.18)}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%}
+body{font-family:"DM Sans",system-ui,sans-serif;color:var(--ink);line-height:1.55;display:grid;grid-template-columns:252px 1fr;background:var(--bg) radial-gradient(#c8d0e6 1px,transparent 1.2px) 0 0/24px 24px}
+h1,h2,.brand{font-family:"Bricolage Grotesque","DM Sans",system-ui,sans-serif}
+nav{background:var(--ink);color:#c9d1ee;padding:26px 16px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.brand{font-size:27px;font-weight:800;letter-spacing:-.03em;color:#fff;padding:0 12px 22px;display:flex;align-items:center;gap:10px}
+.brand b{width:30px;height:30px;border-radius:9px;background:var(--amber);display:grid;place-items:center}
+.brand b svg{width:18px;height:18px;fill:var(--ink)}
+.brand i{font-style:normal;color:var(--amber)}
+nav button{all:unset;cursor:pointer;padding:12px 14px;border-radius:12px;font-weight:500;display:flex;gap:12px;align-items:center;transition:background .15s,color .15s}
+nav button svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+nav button:hover{background:var(--ink2);color:#fff}
+nav button[aria-selected=true]{background:#fff;color:var(--ink)}
+nav button[aria-selected=true] svg{stroke:var(--blue)}
+nav button:focus-visible,.btn:focus-visible,input:focus-visible,textarea:focus-visible,.chip:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.live{margin-left:auto;font-size:12px;background:var(--amber);color:var(--ink);border-radius:20px;padding:0 9px;font-weight:700}
+.live[hidden]{display:none}
+.foot{margin-top:auto;font-size:12.5px;color:#7d89b0;padding:14px 12px 0;border-top:1px solid #222b52}
+main{padding:44px clamp(18px,4vw,60px) 60px;max-width:1020px;width:100%}
+.mbrand{display:none}
+section[hidden]{display:none}
+h1{font-size:clamp(32px,4.8vw,54px);font-weight:800;letter-spacing:-.035em;line-height:1.02;margin-bottom:10px}
+.sub{color:var(--mute);max-width:58ch;margin-bottom:26px;font-size:17px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--sh)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+textarea,input[type=text]{width:100%;font:inherit;padding:13px 15px;border:1.5px solid var(--line);border-radius:12px;background:#f6f8fe;color:var(--ink);resize:vertical;transition:border-color .15s,background .15s}
+textarea:focus,input[type=text]:focus{border-color:var(--blue);background:#fff}
+.btn{all:unset;cursor:pointer;background:var(--blue);color:#fff;font-weight:600;padding:12px 20px;border-radius:12px;text-align:center;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18);transition:background .15s,transform .1s}
+.btn:hover{background:var(--blue-d)}.btn:active{transform:translateY(1px)}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
+.btn.ghost:hover{background:#eef2fc}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.chip{all:unset;cursor:pointer;font-size:14px;padding:7px 14px;border-radius:99px;background:#fff;border:1.5px solid var(--line);color:var(--ink2);transition:border-color .15s,background .15s}
+.chip:hover{border-color:var(--blue);background:#f1f4ff}
+.status{min-height:24px;margin:12px 2px;font-size:14.5px;color:var(--mute);white-space:pre-wrap}
+.status.err{color:var(--bad);font-weight:500}.status.ok{color:var(--ok);font-weight:500}
+#log{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;max-height:52vh;overflow:auto;padding:2px}
+#log:empty{display:none}
+.chatwrap:has(#log:not(:empty)) #welcome{display:none}
+.msg{padding:13px 16px;border-radius:18px;max-width:84%;white-space:pre-wrap;word-wrap:break-word}
+.msg.me{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:6px}
+.msg.bot{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:6px;box-shadow:var(--sh)}
+.autos{display:grid;gap:16px;margin-top:6px}
+.autos:empty::before{content:"No automations yet. Describe one above and it will show up here.";color:var(--mute);border:2px dashed var(--line);border-radius:20px;padding:30px;text-align:center}
+.auto{display:grid;gap:12px;border-left:5px solid var(--line)}
+.auto.on{border-left-color:var(--amber)}
+.auto header{display:flex;justify-content:space-between;gap:14px;align-items:center}
+.auto h2{font-size:21px;font-weight:600}
+.meta{font-size:13.5px;color:var(--mute)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--line);margin-right:8px}
+.on .dot{background:var(--amber);animation:p 1.6s infinite}
+@keyframes p{50%{box-shadow:0 0 0 6px rgba(255,180,0,.28)}}
+.out{white-space:pre-wrap;background:#f2f5fd;border:1px solid var(--line);border-radius:12px;padding:13px;font-size:14.5px;max-height:240px;overflow:auto}
+.sw{display:flex;gap:10px;align-items:center;cursor:pointer;font-weight:600;font-size:14px}
+.sw input{appearance:none;width:44px;height:25px;border-radius:13px;background:#c4cce2;position:relative;cursor:pointer;transition:background .2s;flex:none}
+.sw input::after{content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.sw input:checked{background:var(--blue)}.sw input:checked::after{transform:translateX(19px)}
+.browser{margin-top:16px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff;box-shadow:var(--sh)}
+.bar{display:flex;gap:7px;align-items:center;padding:11px 14px;background:var(--ink);}
+.bar i{width:11px;height:11px;border-radius:50%;background:#3a4572}
+.bar i:first-child{background:var(--amber)}
+.bar span{margin-left:10px;font-size:12.5px;color:#9aa6cc;background:var(--ink2);padding:3px 14px;border-radius:99px}
+iframe{display:block;width:100%;height:56vh;border:0;background:#fff}
+.ph{padding:60px 20px;text-align:center;color:var(--mute)}
+.browser iframe:not([hidden])+.ph{display:none}
+.note{font-size:13.5px;color:var(--mute);margin-top:12px}
+@media(max-width:780px){
+ body{grid-template-columns:1fr;padding-bottom:78px}
+ nav{position:fixed;inset:auto 0 0 0;height:auto;flex-direction:row;justify-content:space-around;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));z-index:20}
+ nav button{flex-direction:column;gap:3px;font-size:12px;padding:8px 14px;position:relative}
+ .live{position:absolute;top:2px;right:6px;margin:0}
+ .brand,.foot{display:none}
+ .mbrand{display:block;font:800 22px "Bricolage Grotesque",sans-serif;margin-bottom:18px}
+ .mbrand i{font-style:normal;color:var(--blue)}
+ main{padding-top:calc(24px + env(safe-area-inset-top,0px))}
+ .msg{max-width:94%}.auto header{flex-direction:column;align-items:flex-start}
+}
+@media(prefers-reduced-motion:reduce){.on .dot{animation:none}*{transition:none!important}}
+</style>
+</head>
+<body>
+<nav role="tablist" aria-label="Sections">
+  <div class="brand"><b><svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></b>Auto<i>pilot</i></div>
+  <button role="tab" data-v="chat" aria-selected="true"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-5.4A8 8 0 1 1 21 12z"/></svg>Assistant</button>
+  <button role="tab" data-v="auto" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>Automations <span class="live" id="liveCount" hidden>0</span></button>
+  <button role="tab" data-v="site" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18"/></svg>Site studio</button>
+  <div class="foot">Automations run while this page stays open.</div>
+</nav>
+
+<main>
+  <div class="mbrand">Auto<i>pilot</i></div>
+
+  <section id="v-chat" class="chatwrap">
+    <h1>Ask anything.<br>Get a real answer.</h1>
+    <p class="sub">Questions, plans, code, ideas. Ask in Hindi or English and the assistant replies in kind.</p>
+    <div id="welcome" class="chips">
+      <button class="chip" data-t="#chatIn" data-fill="Give me 5 website ideas that can go viral without any marketing">5 viral website ideas</button>
+      <button class="chip" data-t="#chatIn" data-fill="How can I automate posting football updates every day?">Automate football updates</button>
+      <button class="chip" data-t="#chatIn" data-fill="Explain how GitHub Pages works in simple words">How GitHub Pages works</button>
+    </div>
+    <div id="log"></div>
+    <div class="card row" style="align-items:flex-end">
+      <div style="flex:1;min-width:220px"><textarea id="chatIn" rows="2" placeholder="Type your question and press Enter"></textarea></div>
+      <button class="btn" id="chatSend">Send</button>
+    </div>
+    <div class="status" id="st-chat"></div>
+  </section>
+
+  <section id="v-auto" hidden>
+    <h1>Describe it.<br>It runs.</h1>
+    <p class="sub">Tell the AI what to automate and how often. It builds the automation, and you switch it on.</p>
+    <div class="chips">
+      <button class="chip" data-t="#autoIn" data-fill="Every morning, write 5 short football match previews for today">Daily match previews</button>
+      <button class="chip" data-t="#autoIn" data-fill="Every hour, suggest one trending website idea with a name and a one-line pitch">Hourly website idea</button>
+      <button class="chip" data-t="#autoIn" data-fill="Every day, create a new 5-question football quiz with answers">Daily quiz</button>
+    </div>
+    <div class="card">
+      <textarea id="autoIn" rows="3" placeholder="What should be automated, and how often?"></textarea>
+      <div class="row" style="margin-top:14px"><button class="btn" id="autoMake">Build automation</button></div>
+    </div>
+    <div class="status" id="st-auto"></div>
+    <div class="autos" id="autos"></div>
+  </section>
+
+  <section id="v-site" hidden>
+    <h1>Turn a topic<br>into a website.</h1>
+    <p class="sub">Give a topic and the AI writes a complete, responsive site. Preview it, download it, or push it to your GitHub repo.</p>
+    <div class="chips">
+      <button class="chip" data-t="#topic" data-fill="Live football scores and fixtures">Football scores</button>
+      <button class="chip" data-t="#topic" data-fill="World Cup facts for every country">World Cup facts</button>
+      <button class="chip" data-t="#topic" data-fill="Daily puzzle game with a streak counter">Daily puzzle game</button>
+    </div>
+    <div class="card">
+      <input type="text" id="topic" placeholder="Topic, for example: today’s football fixtures">
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="siteMake">Generate site</button>
+        <button class="btn ghost" id="siteIdeas">Suggest topics</button>
+        <button class="btn ghost" id="siteDl" disabled>Download index.html</button>
+        <button class="btn ghost" id="sitePush" disabled>Push to GitHub</button>
+      </div>
+      <p class="note">The AI can’t see live trends, so enter the topic you want. Pushing needs GITHUB_TOKEN and GITHUB_REPO in the SETTINGS block at the bottom of this file.</p>
+    </div>
+    <div class="status" id="st-site"></div>
+    <div class="browser">
+      <div class="bar"><i></i><i></i><i></i><span>preview</span></div>
+      <iframe id="frame" title="Site preview" sandbox="allow-scripts" hidden></iframe>
+      <div class="ph">Your generated site will appear here.</div>
+    </div>
+  </section>
+</main>
+
+<script>
+
+const $ = s => document.querySelector(s);
+const store = {
+  get(k, d){ try{ const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+const say = (id, t, cls) => { const e = $("#st-" + id); e.textContent = t; e.className = "status " + (cls || ""); };
+
+async function ai(messages){
+  if(!OPENROUTER_API_KEY) throw new Error("Add your OpenRouter key to OPENROUTER_API_KEY at the very bottom of index.html.");
+  const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {"Content-Type": "application/json", "Authorization": "Bearer " + OPENROUTER_API_KEY},
+    body: JSON.stringify({model: MODEL, messages})
+  });
+  const j = await r.json().catch(() => ({}));
+  if(!r.ok) throw new Error((j.error && j.error.message) || "Request failed (" + r.status + ")");
+  return j.choices[0].message.content;
+}
+async function busy(btn, id, label, fn){
+  btn.disabled = true; say(id, label);
+  try{ await fn(); }catch(e){ say(id, e.message, "err"); }
+  btn.disabled = false;
+}
+
+/* ---------- tabs ---------- */
+document.querySelectorAll("nav [role=tab]").forEach(b => b.onclick = () => {
+  document.querySelectorAll("nav [role=tab]").forEach(x => x.setAttribute("aria-selected", x === b));
+  document.querySelectorAll("main section").forEach(s => s.hidden = s.id !== "v-" + b.dataset.v);
+});
+
+/* ---------- assistant ---------- */
+const history = [{role: "system", content: "You are a clear, friendly assistant. Answer concisely. Reply in the user’s language."}];
+function bubble(cls, text){
+  const d = document.createElement("div"); d.className = "msg " + cls; d.textContent = text;
+  $("#log").appendChild(d); $("#log").scrollTop = 1e9;
+}
+async function sendChat(){
+  const t = $("#chatIn").value.trim(); if(!t) return;
+  $("#chatIn").value = ""; bubble("me", t); history.push({role: "user", content: t});
+  await busy($("#chatSend"), "chat", "Thinking…", async () => {
+    const a = await ai(history); history.push({role: "assistant", content: a}); bubble("bot", a); say("chat", "");
+  });
+}
+$("#chatSend").onclick = sendChat;
+$("#chatIn").addEventListener("keydown", e => { if(e.key === "Enter" && !e.shiftKey){ e.preventDefault(); sendChat(); } });
+
+/* ---------- automations ---------- */
+let autos = store.get("autos", []);
+const save = () => store.set("autos", autos);
+const every = m => m % 1440 === 0 ? "every " + (m / 1440 === 1 ? "day" : m / 1440 + " days") : m % 60 === 0 ? "every " + (m / 60 === 1 ? "hour" : m / 60 + " hours") : "every " + m + " min";
+
+function drawAutos(){
+  const box = $("#autos"); box.textContent = "";
+  autos.forEach(a => {
+    const c = document.createElement("div"); c.className = "card auto" + (a.active ? " on" : "");
+    const h = document.createElement("header");
+    const left = document.createElement("div");
+    const t = document.createElement("h2"); t.textContent = a.name;
+    const m = document.createElement("div"); m.className = "meta";
+    const dot = document.createElement("span"); dot.className = "dot";
+    m.append(dot, every(a.every) + " · " + (a.last ? "last run " + new Date(a.last).toLocaleString() : "not run yet"));
+    left.append(t, m);
+    const sw = document.createElement("label"); sw.className = "sw";
+    const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = a.active;
+    cb.onchange = () => { a.active = cb.checked; save(); drawAutos(); };
+    sw.append(cb, "Active"); h.append(left, sw);
+    const p = document.createElement("div"); p.className = "meta"; p.textContent = a.prompt;
+    c.append(h, p);
+    if(a.output){ const o = document.createElement("div"); o.className = "out"; o.textContent = a.output; c.append(o); }
+    const r = document.createElement("div"); r.className = "row";
+    const run = document.createElement("button"); run.className = "btn ghost"; run.textContent = "Run now";
+    run.onclick = () => busy(run, "auto", "Running “" + a.name + "”…", async () => { await runAuto(a); say("auto", "Done.", "ok"); });
+    const del = document.createElement("button"); del.className = "btn ghost"; del.textContent = "Delete";
+    del.onclick = () => { autos = autos.filter(x => x.id !== a.id); save(); drawAutos(); };
+    r.append(run, del); c.append(r); box.append(c);
+  });
+  const n = autos.filter(a => a.active).length;
+  $("#liveCount").textContent = n; $("#liveCount").hidden = !n;
+}
+async function runAuto(a){
+  a.running = true;
+  try{
+    a.output = await ai([{role: "system", content: "You are an automation engine. Carry out the task and return only the finished result."}, {role: "user", content: a.prompt}]);
+    a.last = Date.now(); save();
+  } finally { a.running = false; drawAutos(); }
+}
+$("#autoMake").onclick = () => {
+  const text = $("#autoIn").value.trim(); if(!text) return;
+  busy($("#autoMake"), "auto", "Building your automation…", async () => {
+    const out = await ai([
+      {role: "system", content: 'Turn the request into an automation. Reply with JSON only, no code fences: {"name":"short title","prompt":"the exact instruction to carry out on every run","everyMinutes":number}. Use 1440 for daily and 60 for hourly when the user gives no schedule.'},
+      {role: "user", content: text}]);
+    let o; try{ o = JSON.parse(out.replace(/```json|```/g, "").trim()); }catch(e){ throw new Error("The AI reply wasn’t valid. Try describing it again."); }
+    autos.unshift({id: Date.now(), name: String(o.name || "Automation"), prompt: String(o.prompt || text), every: Math.max(1, Number(o.everyMinutes) || 1440), active: false, last: 0, output: ""});
+    save(); drawAutos(); $("#autoIn").value = ""; say("auto", "Built. Switch it on with the Active toggle.", "ok");
+  });
+};
+setInterval(() => {
+  autos.filter(a => a.active && !a.running && (!a.last || Date.now() - a.last >= a.every * 60000))
+       .forEach(a => runAuto(a).catch(e => say("auto", a.name + ": " + e.message, "err")));
+}, 30000);
+drawAutos();
+
+/* ---------- site studio ---------- */
+let html = "";
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "site";
+$("#siteMake").onclick = () => {
+  const topic = $("#topic").value.trim(); if(!topic) return say("site", "Enter a topic first.", "err");
+  busy($("#siteMake"), "site", "Writing your site. This can take a minute…", async () => {
+    const out = await ai([
+      {role: "system", content: "You are a senior web designer. Return ONE complete, self-contained HTML file (inline CSS and JS, no external files or images) for the topic. Responsive, distinctive modern design, real sample content. Return only the HTML, no explanation."},
+      {role: "user", content: "Topic: " + topic}]);
+    html = out.replace(/^```html\s*|^```\s*|```\s*$/gm, "").trim();
+    const f = $("#frame"); f.hidden = false; f.srcdoc = html;
+    $("#siteDl").disabled = false; $("#sitePush").disabled = false; say("site", "Ready. Preview below.", "ok");
+  });
+};
+$("#siteIdeas").onclick = () => busy($("#siteIdeas"), "site", "Thinking of topics…", async () => {
+  say("site", await ai([{role: "user", content: "Give 8 short website topic ideas that people search for often (sports, tech, entertainment, tools). One per line, no numbering."}]));
+});
+$("#siteDl").onclick = () => {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([html], {type: "text/html"}));
+  a.download = "index.html"; a.click(); URL.revokeObjectURL(a.href);
+};
+$("#sitePush").onclick = () => busy($("#sitePush"), "site", "Pushing to GitHub…", async () => {
+  if(!GITHUB_TOKEN || !GITHUB_REPO) throw new Error("Set GITHUB_TOKEN and GITHUB_REPO at the bottom of this file first.");
+  const path = slug($("#topic").value) + "/index.html";
+  const url = "https://api.github.com/repos/" + GITHUB_REPO + "/contents/" + path;
+  const h = {"Authorization": "Bearer " + GITHUB_TOKEN, "Accept": "application/vnd.github+json"};
+  const ex = await fetch(url, {headers: h}); const sha = ex.ok ? (await ex.json()).sha : undefined;
+  const r = await fetch(url, {method: "PUT", headers: h, body: JSON.stringify({message: "Add " + path, content: btoa(unescape(encodeURIComponent(html))), sha})});
+  if(!r.ok) throw new Error("GitHub said: " + ((await r.json().catch(() => ({}))).message || r.status));
+  say("site", "Pushed to " + GITHUB_REPO + "/" + path, "ok");
+});
+</script>
+<script>
+// ======================================================================
+//  SETTINGS  ·  paste your keys between the quotes
+// ======================================================================
+const OPENROUTER_API_KEY ="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";            // <- your OpenRouter API key goes here
+const MODEL = "openrouter/free";       // any OpenRouter model id
+const GITHUB_TOKEN = "";                  // optional: only for "Push to GitHub"
+const GITHUB_REPO = "";                   // optional: "username/repo"
+// ======================================================================
+document.querySelectorAll("[data-fill]").forEach(b => b.onclick = () => { const t = document.querySelector(b.dataset.t); t.value = b.dataset.fill; t.focus(); });
+</script>
+</body>
+</html>
